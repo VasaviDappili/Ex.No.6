@@ -1,128 +1,162 @@
-# Ex.No.6 Development of Python Code Compatible with Multiple AI Tools
+## Ex.No.6 Development of Python Code Compatible with Multiple AI Tools
+## Develop By  : DAPPILI VASAVI
+## Register no : 212223040030
 
-# Date:07.05.2025
-# Register no.: 212223040030
-# Aim:
-To write and implement Python code that integrates with multiple AI tools 
-(such as OpenAI GPT, Hugging Face, and Google Gemini) to automate API interactions, 
-compare outputs, and generate actionable insights.
-# AI Tools Required:
-  OpenAI GPT-3.5/4 (Text Processing)
-  Hugging Face Transformers (Sentiment Analysis)
-  Amazon Warehouse API (Simulated)
+## Aim 
+Write and implement Python code that integrates with multiple AI tools to automate the task of interacting with APIs, comparing outputs, and generating actionable insights with Multiple AI Tools.
+## 🔍 AI Tools Required:
+ChatGPT (OpenAI)
+
+Claude (Anthropic)
+
+Gemini (Google)
 
 
-## **Algorithm & Implementation**
+## Explanation:
+Experiment the persona pattern as a programmer for any specific applications related with your interesting area. Generate the outoput using more than one AI tool and based on the code generation analyse and discussing that.
 
-### **1. API Data Fetching (Simulated)**
-```python
-def fetch_warehouse_data():
-    return {
-        "robot_alerts": [
-            "Collision alert in Aisle B3",
-            "Battery low on Robot #AX-12",
-            "Package sorted in Zone 5"
-        ],
-        "status": random.choice(["Operational", "Maintenance_Needed"])
-    }
+## ⚙️ Use Case
+Mental Health Assessment System: An AI-powered assistant for preliminary evaluation of psychological symptoms (e.g., anxiety, depression, sleep disorders). It collects symptom information and offers probable conditions and action steps for further consultation.
+
+
+## 📌 Algorithm Overview
+## Step-by-Step Workflow
+## 1. Set Up API Integrations
+Configure API keys and setup for ChatGPT, Claude, and Gemini using Python.
+
+## 2. Input Mental Health Query
+Provide structured inputs: emotional state, sleep pattern, social activity level, mood swings.
+
+## 3. Prompt Variants
+
+Standard Prompt: Plain text question
+
+Survey Format Prompt: Questionnaire-style
+
+Incomplete Sentence Prompt: Gap-fill prompt for prediction
+
+## 4. Send Prompts to Each AI Tool
+
+## 5. Receive & Parse AI Responses
+
+## 6. Evaluate Responses
+Compare for empathy, diagnostic accuracy, language clarity, and suggested actionability.
+
+## 7. Generate Insights
+
+## 8. Display Final Report
+
+## 🧪 Prompt Types
+## 1. Standard Prompt
+## Prompt:
+"Patient reports persistent sadness, loss of interest in daily activities, and insomnia. What mental health condition might this indicate, and what are the next steps?"
+
+| **AI Tool** | **Response**                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| **ChatGPT** | Likely depression; suggest therapy and sleep hygiene practices.                                  |
+| **Claude**  | Suggests Major Depressive Disorder; recommends clinical diagnosis, CBT, and possible medication. |
+| **Gemini**  | Could be clinical depression; advises mental health evaluation and journaling exercise.          |
+
+## 2. Survey Format Prompt
+## Prompt (Questionnaire style):
+
+![image](https://github.com/user-attachments/assets/91b29810-4923-4cbf-944f-46626bb990d5)
+
+Query: Based on this profile, provide the possible condition and next steps.
+| **AI Tool** | **Response**                                                                     |
+| ----------- | -------------------------------------------------------------------------------- |
+| **ChatGPT** | Indicative of depression; recommends visiting a psychologist.                    |
+| **Claude**  | Strong symptoms of depressive disorder; suggests a diagnostic interview and CBT. |
+| **Gemini**  | May point to mood disorder; suggests digital therapy apps and self-care tips.    |
+
+## 3. Incomplete Sentence Prompt
+## Prompt:
+"A person showing signs of anxiety and restlessness is likely suffering from ______."
+| **AI Tool** | **Response**                          |
+| ----------- | ------------------------------------- |
+| **ChatGPT** | Generalized Anxiety Disorder          |
+| **Claude**  | Anxiety disorder                      |
+| **Gemini**  | Generalized anxiety or panic disorder |
+
+## 💻 Python Code:
 ```
+import openai
+import requests
 
-### **2. AI Tools Integration**
-```python
-# Hugging Face Sentiment Analysis
-def analyze_sentiment(texts):
-    analyzer = pipeline("sentiment-analysis")
-    return [analyzer(text)[0] for text in texts]
+# API keys (replace with actual keys)
+CHATGPT_API_KEY = "your_openai_key"
+CLAUDE_API_KEY = "your_claude_key"
+GEMINI_API_KEY = "your_gemini_key"
 
-# OpenAI Summarization
-def generate_summary(text, api_key):
-    openai.api_key = api_key
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user", "content":f"Summarize these alerts: {text}"}]
+openai.api_key = CHATGPT_API_KEY
+
+def get_chatgpt_response(prompt):
+    response = openai.Completion.create(
+        model="gpt-4",
+        prompt=prompt,
+        max_tokens=150
     )
-    return response.choices[0].message['content']
-```
+    return response.choices[0].text.strip()
 
-### **3. Comparison & Insight Generation**
-```python
-def generate_insights(data, sentiments, summary):
-    critical = sum(1 for s in sentiments if s['label']=='NEGATIVE')
-    return {
-        "critical_alerts": critical,
-        "operational_status": data["status"],
-        "recommendation": "Immediate maintenance" if critical > 1 else "Routine check"
+def get_claude_response(prompt):
+    headers = {
+        'Authorization': f'Bearer {CLAUDE_API_KEY}',
+        'Content-Type': 'application/json'
     }
+    payload = {'prompt': prompt}
+    url = 'https://api.claude.ai/v1/complete'
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json().get('completion', '')
+
+def get_gemini_response(prompt):
+    headers = {
+        'Authorization': f'Bearer {GEMINI_API_KEY}',
+        'Content-Type': 'application/json'
+    }
+    payload = {'prompt': prompt}
+    url = 'https://api.gemini.ai/v1/generate'
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json().get('text', '')
+
+# Sample input
+query = "Patient reports persistent sadness, loss of interest in daily activities, and insomnia. What mental health condition might this indicate, and what are the next steps?"
+
+# Execute all APIs
+chatgpt = get_chatgpt_response(query)
+claude = get_claude_response(query)
+gemini = get_gemini_response(query)
+
+# Display responses
+print("ChatGPT Response:\n", chatgpt)
+print("\nClaude Response:\n", claude)
+print("\nGemini Response:\n", gemini)
 ```
 
-### **4. Complete Workflow**
-```python
-def main():
-    # 1. Fetch Data
-    data = fetch_warehouse_data()
-    
-    # 2. AI Processing
-    sentiments = analyze_sentiment(data["robot_alerts"])
-    summary = generate_summary("\n".join(data["robot_alerts"]), "your_openai_key")
-    
-    # 3. Generate Insights
-    insights = generate_insights(data, sentiments, summary)
-    
-    # 4. Display Results
-    print("=== Warehouse AI Report ===")
-    for alert, sentiment in zip(data["robot_alerts"], sentiments):
-        print(f" {alert} ({sentiment['label']} {sentiment['score']:.2f})")
-    print(f"\n  AI Summary: {summary}")
-    print(f"\n  Recommendation: {insights['recommendation']}")
-
-if __name__ == "__main__":
-    main()
+## 📊 Evaluation
 ```
+import pandas as pd
 
----
+data = {
+    "AI Tool": ["ChatGPT", "Claude", "Gemini"],
+    "Accuracy": ["High", "High", "Moderate"],
+    "Empathy": ["High", "High", "Moderate"],
+    "Clarity": ["Very Clear", "Detailed", "Concise"],
+    "Practicality": ["Useful", "Clinical", "Light Suggestions"]
+}
 
-## **Execution Steps:**  
-1. Install dependencies:
-   ```bash
-   pip install transformers openai
-   ```
-2. Set OpenAI API key  
-3. Run script:
-   ```bash
-   python warehouse_ai.py
-   ```
+df = pd.DataFrame(data)
+print(df)
 
----
-
-## **Sample Output:**
 ```
-=== Warehouse AI Report ===
-Collision alert in Aisle B3 (NEGATIVE 0.97)
-Battery low on Robot #AX-12 (NEGATIVE 0.89)
-Package sorted in Zone 5 (POSITIVE 0.95)
+| AI Tool | Accuracy | Empathy  | Clarity    | Practicality      |
+| ------- | -------- | -------- | ---------- | ----------------- |
+| ChatGPT | High     | High     | Very Clear | Useful            |
+| Claude  | High     | High     | Detailed   | Clinical          |
+| Gemini  | Moderate | Moderate | Concise    | Light Suggestions |
 
-AI Summary: The system reports two critical alerts (collision and low battery) 
-and one successful package sorting operation.
+## 📌 Conclusion:
+This experiment demonstrates an AI-assisted diagnostic framework for mental health use cases. The integration with multiple AI tools showcases how prompt structuring and platform selection can affect diagnosis quality. ChatGPT proved effective in empathy and clarity, while Claude offered detailed clinical guidance. Gemini performed well in concise delivery.
 
-Recommendation: Immediate maintenance
-```
+## Result: 
+The corresponding Prompt is executed successfully.
 
----
-
-## **Conclusion:**  
-The system successfully demonstrates:  
-
-1. **Multi-AI Integration**  
-   - Hugging Face for real-time sentiment analysis  
-   - OpenAI for contextual summarization  
-
-2. **Automated Decision Making**  
-   - Priority-based alert classification  
-   - Actionable maintenance recommendations  
-
-3. **Scalable Architecture**  
-   - Modular design for additional AI/API integrations  
-   - Adaptable to other industrial IoT scenarios  
-
-
-# Result: The corresponding Prompt is executed successfully.
